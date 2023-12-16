@@ -8,6 +8,5 @@ public class Color : BaseEntity
     [Required, StringLength(7)]
     public string HexCode { get; set; } = string.Empty;
 
-    public IEnumerable<FurnitureColor> FurnitureColors { get; set; } 
-        = new List<FurnitureColor>();
+    public ICollection<Furniture>? Furnitures { get; set; }
 }

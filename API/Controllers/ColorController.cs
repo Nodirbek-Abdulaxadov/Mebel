@@ -1,7 +1,6 @@
 ﻿using BusinessLogicLayer.Extended;
 using BusinessLogicLayer.Interfaces;
 using DTOs.ColorDtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -13,14 +12,14 @@ public class ColorController(IColorService colorService)
 {
     private readonly IColorService _colorService = colorService;
 
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<IActionResult> GetAllAsync()
     {
         var colors = await _colorService.GetAllAsync();
         return Ok(colors);
     }
 
-    [HttpGet]
+    [HttpGet("paged")]
     public async Task<IActionResult> GetPagedAsync([FromQuery] int pageSize, [FromQuery] int pageNumber)
     {
         var colors = await _colorService.GetAllAsync(pageSize, pageNumber);

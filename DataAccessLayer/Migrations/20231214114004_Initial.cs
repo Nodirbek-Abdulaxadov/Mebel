@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,7 +53,7 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -65,11 +65,11 @@ namespace DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Color",
+                name: "Colors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -82,7 +82,7 @@ namespace DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Color", x => x.Id);
+                    table.PrimaryKey("PK_Colors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,7 +192,7 @@ namespace DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Furniture",
+                name: "Furnitures",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -207,45 +207,41 @@ namespace DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Furniture", x => x.Id);
+                    table.PrimaryKey("PK_Furnitures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Furniture_Category_CategoryId",
+                        name: "FK_Furnitures_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FurnitureColor",
+                name: "FurnitureColors",
                 columns: table => new
                 {
-                    FurnitureId = table.Column<int>(type: "integer", nullable: false),
-                    ColorId = table.Column<int>(type: "integer", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    ColorsId = table.Column<int>(type: "integer", nullable: false),
+                    FurnituresId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FurnitureColor", x => new { x.FurnitureId, x.ColorId });
+                    table.PrimaryKey("PK_FurnitureColors", x => new { x.ColorsId, x.FurnituresId });
                     table.ForeignKey(
-                        name: "FK_FurnitureColor_Color_ColorId",
-                        column: x => x.ColorId,
-                        principalTable: "Color",
+                        name: "FK_FurnitureColors_Colors_ColorsId",
+                        column: x => x.ColorsId,
+                        principalTable: "Colors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FurnitureColor_Furniture_FurnitureId",
-                        column: x => x.FurnitureId,
-                        principalTable: "Furniture",
+                        name: "FK_FurnitureColors_Furnitures_FurnituresId",
+                        column: x => x.FurnituresId,
+                        principalTable: "Furnitures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Image",
+                name: "Images",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -258,11 +254,11 @@ namespace DataAccessLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.PrimaryKey("PK_Images", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Image_Furniture_FurnitureId",
+                        name: "FK_Images_Furnitures_FurnitureId",
                         column: x => x.FurnitureId,
-                        principalTable: "Furniture",
+                        principalTable: "Furnitures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -305,18 +301,18 @@ namespace DataAccessLayer.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Furniture_CategoryId",
-                table: "Furniture",
+                name: "IX_FurnitureColors_FurnituresId",
+                table: "FurnitureColors",
+                column: "FurnituresId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Furnitures_CategoryId",
+                table: "Furnitures",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FurnitureColor_ColorId",
-                table: "FurnitureColor",
-                column: "ColorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Image_FurnitureId",
-                table: "Image",
+                name: "IX_Images_FurnitureId",
+                table: "Images",
                 column: "FurnitureId");
         }
 
@@ -339,10 +335,10 @@ namespace DataAccessLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "FurnitureColor");
+                name: "FurnitureColors");
 
             migrationBuilder.DropTable(
-                name: "Image");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -351,13 +347,13 @@ namespace DataAccessLayer.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Color");
+                name: "Colors");
 
             migrationBuilder.DropTable(
-                name: "Furniture");
+                name: "Furnitures");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Categories");
         }
     }
 }

@@ -46,8 +46,10 @@ public static class Startup
 
         builder.Services.AddTransient<ICategoryService, CategoryService>();
         builder.Services.AddTransient<IColorService, ColorService>();
+        builder.Services.AddTransient<IImageService, ImageService>();
+        builder.Services.AddTransient<IFurnitureService, FurnitureService>();
         #endregion
-
+        
 
     }
 

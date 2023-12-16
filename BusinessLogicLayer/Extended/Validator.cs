@@ -8,7 +8,7 @@ public static class Validator
 
     public static bool IsExist(this Category category, 
                                   IEnumerable<Category> categories)
-        => !categories.Any(c => c.Name == category.Name);
+        => categories.Any(c => c.Name == category.Name);
 
     public static bool IsNotUnique(this Category category, 
                                                  IEnumerable<Category> categories)
@@ -19,7 +19,7 @@ public static class Validator
 
     public static bool IsExist(this Color color, 
                                   IEnumerable<Color> colors)
-        => !colors.Any(c => c.Name == color.Name);
+        => colors.Any(c => c.Name == color.Name);
 
     public static bool IsNotUnique(this Color color, 
                                           IEnumerable<Color> colors)

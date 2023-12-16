@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAcce
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{36F3A519-16C6-4AE7-9ACE-27C5AAD8CDE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{6D9AB4C4-3406-492F-80C3-0D3F192883B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{6D9AB4C4-3406-492F-80C3-0D3F192883B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", "{835306D0-144B-43AE-A1C5-FE78131552F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTOs", "DTOs\DTOs.csproj", "{835306D0-144B-43AE-A1C5-FE78131552F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Admin", "Admin\Admin.csproj", "{E7EACF03-CDFC-43B3-A684-2AFFE7AA3EDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{835306D0-144B-43AE-A1C5-FE78131552F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{835306D0-144B-43AE-A1C5-FE78131552F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{835306D0-144B-43AE-A1C5-FE78131552F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7EACF03-CDFC-43B3-A684-2AFFE7AA3EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7EACF03-CDFC-43B3-A684-2AFFE7AA3EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7EACF03-CDFC-43B3-A684-2AFFE7AA3EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7EACF03-CDFC-43B3-A684-2AFFE7AA3EDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

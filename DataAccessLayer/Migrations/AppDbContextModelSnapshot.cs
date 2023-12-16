@@ -22,6 +22,21 @@ namespace DataAccessLayer.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ColorFurniture", b =>
+                {
+                    b.Property<int>("ColorsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FurnituresId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ColorsId", "FurnituresId");
+
+                    b.HasIndex("FurnituresId");
+
+                    b.ToTable("FurnitureColors", (string)null);
+                });
+
             modelBuilder.Entity("DataAccessLayer.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -46,7 +61,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Color", b =>
@@ -78,7 +93,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Color");
+                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Furniture", b =>
@@ -118,34 +133,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Furniture");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entities.FurnitureColor", b =>
-                {
-                    b.Property<int>("FurnitureId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ColorId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("FurnitureId", "ColorId");
-
-                    b.HasIndex("ColorId");
-
-                    b.ToTable("FurnitureColor");
+                    b.ToTable("Furnitures");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Image", b =>
@@ -177,7 +165,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("FurnitureId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.User", b =>
@@ -381,6 +369,21 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ColorFurniture", b =>
+                {
+                    b.HasOne("DataAccessLayer.Entities.Color", null)
+                        .WithMany()
+                        .HasForeignKey("ColorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccessLayer.Entities.Furniture", null)
+                        .WithMany()
+                        .HasForeignKey("FurnituresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DataAccessLayer.Entities.Furniture", b =>
                 {
                     b.HasOne("DataAccessLayer.Entities.Category", "Category")
@@ -390,25 +393,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entities.FurnitureColor", b =>
-                {
-                    b.HasOne("DataAccessLayer.Entities.Color", "Color")
-                        .WithMany("FurnitureColors")
-                        .HasForeignKey("ColorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccessLayer.Entities.Furniture", "Furniture")
-                        .WithMany("FurnitureColors")
-                        .HasForeignKey("FurnitureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Color");
-
-                    b.Navigation("Furniture");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Image", b =>
@@ -478,15 +462,8 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Furnitures");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.Color", b =>
-                {
-                    b.Navigation("FurnitureColors");
-                });
-
             modelBuilder.Entity("DataAccessLayer.Entities.Furniture", b =>
                 {
-                    b.Navigation("FurnitureColors");
-
                     b.Navigation("Images");
                 });
 #pragma warning restore 612, 618

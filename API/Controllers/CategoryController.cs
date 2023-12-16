@@ -12,7 +12,14 @@ public class CategoryController(ICategoryService categoryService)
 {
     private readonly ICategoryService _categoryService = categoryService;
 
-    [HttpGet]
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        var categories = await _categoryService.GetAllAsync();
+        return Ok(categories);
+    }
+
+    [HttpGet("paged")]
     public async Task<IActionResult> GetAllAsync([FromQuery] int pageSize, [FromQuery] int pageNumber)
     {
         var categories = await _categoryService.GetAllAsync(pageSize, pageNumber);

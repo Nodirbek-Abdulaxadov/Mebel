@@ -11,9 +11,8 @@ public class Furniture : BaseEntity
     public decimal Price { get; set; }
     [Required]
     public int CategoryId { get; set; }
-    public Category Category { get; set; } = new();
+    public Category? Category { get; set; } = new();
     public IEnumerable<Image> Images { get; set; } 
         = new List<Image>();
-    public IEnumerable<FurnitureColor> FurnitureColors { get; set; } 
-        = new List<FurnitureColor>();
+    public ICollection<Color>? Colors { get; set; }
 }

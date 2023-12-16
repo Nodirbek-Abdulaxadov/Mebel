@@ -6,6 +6,11 @@ namespace DataAccessLayer;
 public class AppDbContext(DbContextOptions<AppDbContext> options) 
     : IdentityDbContext<User>(options)
 {
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Furniture> Furnitures { get; set; }
+    public DbSet<Image> Images { get; set; }
+    public DbSet<Color> Colors { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Category>()
@@ -20,18 +25,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .HasForeignKey(i => i.FurnitureId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<FurnitureColor>()
-            .HasKey(fc => new { fc.FurnitureId, fc.ColorId });
-
-        builder.Entity<FurnitureColor>()
-            .HasOne(fc => fc.Furniture)
-            .WithMany(f => f.FurnitureColors)
-            .HasForeignKey(fc => fc.FurnitureId);
-
-        builder.Entity<FurnitureColor>()
-            .HasOne(fc => fc.Color)
-            .WithMany(c => c.FurnitureColors)
-            .HasForeignKey(fc => fc.ColorId);
+        builder.Entity<Furniture>()
+            .HasMany(f => f.Colors)
+            .WithMany(c => c.Furnitures)
+            .UsingEntity(e => e.ToTable("FurnitureColors"));
 
         base.OnModelCreating(builder);
     }

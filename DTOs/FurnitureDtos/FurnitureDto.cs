@@ -1,4 +1,6 @@
 ﻿using DataAccessLayer.Entities;
+using DTOs.CategoryDtos;
+using DTOs.ColorDtos;
 using DTOs.ImageDtos;
 
 namespace DTOs.FurnitureDtos;
@@ -8,10 +10,10 @@ public class FurnitureDto : BaseDto
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int CategoryId { get; set; }
-    public Category Category { get; set; } = new();
+    public CategoryDto Category { get; set; } = new();
     public List<ImageDto> Images { get; set; } = [];
     public List<int> ColorIds { get; set; } = [];
-    public List<Color> Colors { get; set; } = [];
+    public List<ColorDto> Colors { get; set; } = [];
 
     public static implicit operator FurnitureDto(Furniture furniture)
         => new()
@@ -21,13 +23,13 @@ public class FurnitureDto : BaseDto
             Description = furniture.Description,
             Price = furniture.Price,
             CategoryId = furniture.CategoryId,
-            Category = furniture.Category,
+            Category = (CategoryDto)furniture.Category,
             Images = furniture.Images
                               .Select(i => (ImageDto)i)
                               .ToList(),
-            ColorIds = furniture.FurnitureColors
-                                .Select(c => c.ColorId)
-                                .ToList()
+            Colors = furniture.Colors
+                              .Select(c => (ColorDto)c)
+                              .ToList()
         };
 
     public static implicit operator Furniture(FurnitureDto furnitureDto)
@@ -42,12 +44,7 @@ public class FurnitureDto : BaseDto
             Images = furnitureDto.Images
                               .Select(i => (Image)i)
                               .ToList(),
-            FurnitureColors = furnitureDto.ColorIds
-                                        .Select(c => new FurnitureColor
-                                        {
-                                            ColorId = c,
-                                            FurnitureId = furnitureDto.Id
-                                        })
+            Colors = furnitureDto.Colors.Select(c => (Color)c)
                                         .ToList()
         };
 }
