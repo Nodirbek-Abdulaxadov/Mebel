@@ -5,6 +5,7 @@ public class UnitOfWork(IImageInterface imageInterface,
                         IFurnitureInterface furnitureInterface,
                         IColorInterface colorInterface,
                         ICategoryInterface categoryInterface,
+                        IOtpModelInterface otpModelInterface,
                         AppDbContext dbContext) : IUnitOfWork
 {
     private readonly AppDbContext dbContext = dbContext;
@@ -13,6 +14,8 @@ public class UnitOfWork(IImageInterface imageInterface,
     public IFurnitureInterface Furnitures { get; } = furnitureInterface;
     public IColorInterface Colors { get; } = colorInterface;
     public ICategoryInterface Categories { get; } = categoryInterface;
+
+    public IOtpModelInterface OtpModels { get; } = otpModelInterface;
 
     public void Dispose()
         => GC.SuppressFinalize(this);

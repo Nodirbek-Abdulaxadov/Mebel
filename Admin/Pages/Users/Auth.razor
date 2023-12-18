@@ -1,0 +1,30 @@
+﻿@page "/auth/{authType}"
+
+@if (IsLogin)
+{
+    <Login />
+    <NavLink href="/auth/register" @onclick="RegisterClick">Not Registered? Register Here</NavLink>
+}
+else
+{
+    <Register />
+    <NavLink href="/auth/login" @onclick="LoginClick">Already Registered? Login Here</NavLink>
+}
+
+
+@code {
+    [Parameter]
+    public string authType { get; set; }
+
+    private bool IsLogin = true;
+
+    private void RegisterClick()
+    {
+        IsLogin = false;
+    }
+
+    private void LoginClick()
+    {
+        IsLogin = true;
+    }
+}

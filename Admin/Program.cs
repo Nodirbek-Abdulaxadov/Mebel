@@ -1,13 +1,44 @@
-using Admin;
-using Microsoft.AspNetCore.Components.Web;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MudBlazor.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Blazored.LocalStorage;
+using Blazored.Toast;
+using Admin.Providers;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using Admin.Contracts;
+using Admin.Service;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+namespace Admin
+{
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.RootComponents.Add<App>("#app");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddMudServices();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-await builder.Build().RunAsync();
+            _ = new JwtHeader();
+            _ = new JwtPayload();
+            
+            
+            builder.Services.AddScoped(sp => new HttpClient
+                { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredToast();
+            builder.Services.AddScoped<ApiAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider>(p =>
+                p.GetRequiredService<ApiAuthenticationStateProvider>());
+            builder.Services.AddTransient<IAuthenticationRepository, AuthenticationRepository>();
+            builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
+            //builder.Services.AddTransient<IFileUpload, FileUpload>();
+            await builder.Build().RunAsync();
+        }
+    }
+}

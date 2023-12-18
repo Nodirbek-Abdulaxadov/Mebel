@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Furniture> Furnitures { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<Color> Colors { get; set; }
+    public DbSet<OtpModel> OtpModels { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

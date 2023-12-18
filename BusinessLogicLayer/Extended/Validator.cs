@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 
 namespace BusinessLogicLayer.Extended;
-public static class Validator
+public static partial class Validator
 {
     public static bool IsValidCategory(this Category category)
         => !string.IsNullOrWhiteSpace(category.Name);

@@ -1,11 +1,10 @@
 {
-  "name": "Admin",
-  "short_name": "Admin",
+  "name": "BookStore-UI.WASM",
+  "short_name": "BookStore-UI.WASM",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#03173d",
-  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon-512.png",

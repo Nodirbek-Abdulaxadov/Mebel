@@ -5,5 +5,6 @@ public interface IUnitOfWork : IDisposable
     IFurnitureInterface Furnitures { get; }
     IColorInterface Colors { get; }
     ICategoryInterface Categories { get; }
+    IOtpModelInterface OtpModels { get; }
     Task SaveAsync();
 }
