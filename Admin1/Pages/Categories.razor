@@ -1,0 +1,76 @@
+﻿@page "/categories"
+
+@inject HttpClient Http
+@inject IDialogService Dialog
+
+<PageTitle>Categories</PageTitle>
+
+<MudTable Items="@categories" Dense="true" 
+          Hover="true" Bordered="true" FixedHeader="true"
+          LoadingProgressColor="Color.Primary" Loading="@Loading"
+          Striped="true" Filter="new Func<CategoryDto, bool>(FilterFunc1)"
+          @bind-SelectedItem="selectedCategory">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Categories Table</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" 
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" 
+                      IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" OnClick="@((e) => OpenAddDialog())"
+                   StartIcon="@Icons.Material.Filled.Add" Color="Color.Success">Add new</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Id</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled"
+                       Color="Color.Primary" Size="Size.Small" Class="m-2" />
+        <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" 
+                       Color="Color.Error" Size="Size.Small" Class="m-2"/>
+     </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+    @code {
+    private string searchString = string.Empty;
+    private List<CategoryDto>? categories;
+    private CategoryDto selectedCategory = null;
+    private HashSet<CategoryDto> selectedCategories = new HashSet<CategoryDto>();
+    private bool Loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await Http.GetStringAsync("https://localhost:44304/api/Category/all");
+        categories = JsonSerializer.Deserialize<List<CategoryDto>>(res, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        Loading = false;
+    }
+
+    private bool FilterFunc1(CategoryDto element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(CategoryDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private void OpenAddDialog()
+    {
+        DialogOptions disableBackdropClick = new() 
+        { 
+            DisableBackdropClick = true,
+            FullWidth = true,
+            CloseButton = true
+        };
+        Dialog.Show<Add>("Custom Options Dialog", disableBackdropClick);
+    }
+}

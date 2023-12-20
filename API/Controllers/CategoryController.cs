@@ -61,8 +61,12 @@ public class CategoryController(ICategoryService categoryService)
     {
         try
         {
-            var category = await _categoryService.CreateAsync(categoryDto);
-            return Ok(category);
+            for (int i = 0; i < 5000; i++)
+            {
+                categoryDto.Name = $"Test {i}";
+                var category = await _categoryService.CreateAsync(categoryDto);
+            }
+            return Ok();
         }
         catch (MarketException ex)
         {

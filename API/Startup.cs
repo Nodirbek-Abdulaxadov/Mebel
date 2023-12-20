@@ -14,6 +14,8 @@ namespace API;
 
 public static class Startup
 {
+    private const string _defaultCorsPolicyName = "localhost";
+
     public static void AddDIServices(this WebApplicationBuilder builder)
     {
         #region Default DI Services
@@ -55,7 +57,19 @@ public static class Startup
         builder.Services.AddTransient<IColorService, ColorService>();
         builder.Services.AddTransient<IImageService, ImageService>();
         builder.Services.AddTransient<IFurnitureService, FurnitureService>();
-        builder.Services.AddTransient<IUserService, UserService>(); 
+        builder.Services.AddTransient<IUserService, UserService>();
+        #endregion
+
+        #region CORS Policy for all origins
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(_defaultCorsPolicyName, builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+        });
         #endregion
 
         #region JWT
@@ -86,6 +100,7 @@ public static class Startup
         app.UseSwaggerUI();
         app.UseHsts();
         app.UseHttpsRedirection();
+        app.UseCors(_defaultCorsPolicyName);
         app.UseRouting();
         app.UseStaticFiles();
         app.UseAuthentication();
