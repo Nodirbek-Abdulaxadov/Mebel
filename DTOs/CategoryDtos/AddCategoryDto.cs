@@ -8,6 +8,8 @@ public class AddCategoryDto
     public static implicit operator Category(AddCategoryDto addCategoryDto)
         => new()
         {
-            Name = addCategoryDto.Name
+            Name = addCategoryDto.Name,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         };
 }

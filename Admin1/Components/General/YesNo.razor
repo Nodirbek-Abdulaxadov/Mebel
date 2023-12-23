@@ -1,0 +1,25 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudItem>
+            <MudText>Are you sure you want to delete this category?</MudText>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudItem>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Ok">Ok</MudButton>
+        </MudItem>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public int Id { get; set; }
+    bool success;
+    string name = string.Empty;
+    MudForm form;
+
+    void Ok() => MudDialog.Close(DialogResult.Ok(true));
+
+    void Cancel() => MudDialog.Cancel();
+}

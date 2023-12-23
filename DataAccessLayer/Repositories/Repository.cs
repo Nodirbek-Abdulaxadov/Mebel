@@ -26,10 +26,12 @@ public class Repository<T>(AppDbContext dbContext)
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
-        => await _entities.ToListAsync();
+        => await _entities.AsNoTracking()
+                          .OrderByDescending(i => i.UpdatedAt)
+                          .ToListAsync();
 
     public async Task<T?> GetByIdAsync(int id)
-        => await _entities.FirstOrDefaultAsync(i => i.Id == id);
+        => await _entities.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
 
     public void Update(T entity)
         => _entities.Update(entity);

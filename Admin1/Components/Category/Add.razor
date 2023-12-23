@@ -1,16 +1,63 @@
-﻿<MudDialog>
+﻿@inject ICategoryService categoryService
+@inject ISnackbar Snackbar
+
+<MudDialog>
     <DialogContent>
-        Dialog Content
+        <MudItem>
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@success">
+                    <MudTextField T="string" Label="Name" Required="true"
+                                  Variant="Variant.Outlined"
+                                  @bind-Value="@name"
+                                  RequiredError="Category name is required!"
+                                  Validation="@(new Func<string, string>(NameValidate))" />
+                </MudForm>
+            </MudPaper>
+        </MudItem>
     </DialogContent>
     <DialogActions>
+    <MudItem Class="d-flex justify-content-center">
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </MudItem>
     </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string name = string.Empty;
+    MudForm form;
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    async void Submit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            var result = await categoryService.CreateAsync(
+                new AddCategoryDto { Name = name });
+
+            if (result.IsSuccess)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+                MudDialog.Close(DialogResult.Ok(false));
+            }
+        }
+    }
+
     void Cancel() => MudDialog.Cancel();
+
+    string NameValidate(string arg)
+    {
+        if (!string.IsNullOrEmpty(arg) && arg.Length < 3)
+            return "Name field is required!";
+        if (arg.Length < 3)
+            return "Name must be at least three characters long!";
+        return null;
+    }
 }

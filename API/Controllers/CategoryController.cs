@@ -16,6 +16,7 @@ public class CategoryController(ICategoryService categoryService)
     public async Task<IActionResult> GetAllAsync()
     {
         var categories = await _categoryService.GetAllAsync();
+        await Task.Delay(1000);
         return Ok(categories);
     }
 
@@ -61,20 +62,16 @@ public class CategoryController(ICategoryService categoryService)
     {
         try
         {
-            for (int i = 0; i < 5000; i++)
-            {
-                categoryDto.Name = $"Test {i}";
-                var category = await _categoryService.CreateAsync(categoryDto);
-            }
+            await _categoryService.CreateAsync(categoryDto);
             return Ok();
         }
         catch (MarketException ex)
         {
             return BadRequest(ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -90,9 +87,9 @@ public class CategoryController(ICategoryService categoryService)
         {
             return BadRequest(ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 

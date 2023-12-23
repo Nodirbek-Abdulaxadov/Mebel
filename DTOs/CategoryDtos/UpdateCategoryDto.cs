@@ -9,7 +9,8 @@ public class UpdateCategoryDto : AddCategoryDto
         => new()
         {
             Id = categoryDto.Id,
-            Name = categoryDto.Name
+            Name = categoryDto.Name,
+            UpdatedAt = DateTime.Now
         };
 
     public static explicit operator CategoryDto(UpdateCategoryDto categoryDto)

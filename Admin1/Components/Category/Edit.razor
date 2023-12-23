@@ -1,0 +1,79 @@
+﻿@page "/categories/edit/{Id:int}"
+
+@inject ICategoryService categoryService
+@inject ISnackbar Snackbar
+@inject NavigationManager navigationManager
+
+<MudPaper>
+    <MudItem>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField T="string" Label="Name" Required="true"
+                          Variant="Variant.Outlined"
+                          @bind-Value="@category.Name"
+                          RequiredError="Category name is required!"
+                          Validation="@(new Func<string, string>(NameValidate))" />
+        </MudForm>
+    </MudItem>
+    <MudItem Class="d-flex justify-content-center">
+        <MudButton ><NavLink href="/categories">Cancel</NavLink></MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </MudItem>
+</MudPaper>        
+
+@code {
+    [Parameter] public int Id { get; set; }
+    UpdateCategoryDto category { get; set; } = new();
+    bool success;
+    MudForm form;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await categoryService.GetByIdAsync(Id);
+        if (result.IsSuccess)
+        {
+            category = new()
+            {
+                Id = result.Model.Id,
+                Name = result.Model.Name
+            };
+        }
+        else
+        {
+            Snackbar.Add(result.Message, Severity.Error);
+        }
+        await base.OnInitializedAsync();
+    }
+
+    async void Submit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            var result = await categoryService.UpdateAsync(
+                new() 
+                { 
+                    Id = category.Id,
+                    Name = category.Name 
+                });
+
+            if (result.IsSuccess)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+                navigationManager.NavigateTo("/categories", false, true);
+            }
+            else
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
+        }
+    }
+
+    string NameValidate(string arg)
+    {
+        if (!string.IsNullOrEmpty(arg) && arg.Length < 3)
+            return "Name field is required!";
+        if (arg.Length < 3)
+            return "Name must be at least three characters long!";
+        return null;
+    }
+}

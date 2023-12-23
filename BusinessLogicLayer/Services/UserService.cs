@@ -4,7 +4,7 @@ using BusinessLogicLayer.Interfaces;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using DTOs.UserDtos;
-using Messager;
+using Messager.EskizUz;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -273,8 +273,10 @@ public class UserService(UserManager<User> userManager,
     /// <exception cref="MarketException"></exception>
     public async Task SendOtpAsync(SendOtpDto dto)
     {
-        using var messager = new Message();
-        var result = await messager.SendSMSAsync(dto.PhoneNumber);
+        var email = _configuration["EskizUz:Email"]??"";
+        var key = _configuration["EskizUz:Key"]??"";
+        using var messager = new MessagerAgent(email, key);
+        var result = await messager.SendOtpAsync(dto.PhoneNumber);
 
         if (!result.Success)
         {

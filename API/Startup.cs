@@ -92,6 +92,9 @@ public static class Startup
             });
 
         #endregion
+
+
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 
     public static void AddMiddleware(this WebApplication app)
