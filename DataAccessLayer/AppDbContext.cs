@@ -18,18 +18,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .HasMany(c => c.Furnitures)
             .WithOne(f => f.Category)
             .HasForeignKey(f => f.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.Entity<Furniture>()
             .HasMany(f => f.Images)
             .WithOne(i => i.Furniture)
             .HasForeignKey(i => i.FurnitureId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.Entity<Furniture>()
             .HasMany(f => f.Colors)
             .WithMany(c => c.Furnitures)
             .UsingEntity(e => e.ToTable("FurnitureColors"));
+
+        builder.Entity<User>()
+            .HasMany(u => u.LikedItems)
+            .WithMany(f => f.LikedUsers)
+            .UsingEntity(e => e.ToTable("UserLikedItems"));
+
+        builder.Entity<User>()
+            .HasMany(u => u.Feedbacks)
+            .WithOne(f => f.User)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         base.OnModelCreating(builder);
     }

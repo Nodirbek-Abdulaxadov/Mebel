@@ -4,8 +4,11 @@ namespace DataAccessLayer.Entities;
 public class Category : BaseEntity
 {
     [Required, StringLength(100)]
-    public string Name { get; set; } =  string.Empty;
+    public string NameUz { get; set; } =  string.Empty;
 
-    public IEnumerable<Furniture> Furnitures { get; set; } 
+    [Required, StringLength(100)]
+    public string NameRu { get; set; } =  string.Empty;
+
+    public ICollection<Furniture> Furnitures { get; set; } 
         = new List<Furniture>();
 }

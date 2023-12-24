@@ -9,15 +9,7 @@ public class ColorDto : BaseDto
         => new()
         {
             Id = color.Id,
-            Name = color.Name,
+            Name = color.NameUz,
             HexCode = color.HexCode
-        };
-
-    public static implicit operator Color(ColorDto colorDto)
-        => new()
-        {
-            Id = colorDto.Id,
-            Name = colorDto.Name,
-            HexCode = colorDto.HexCode
         };
 }

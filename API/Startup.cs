@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace API;
@@ -21,7 +22,33 @@ public static class Startup
         #region Default DI Services
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(option =>
+        {
+            option.SwaggerDoc("v1", new OpenApiInfo { Title = "Furniture API", Version = "v1" });
+            option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter a valid token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "Bearer"
+            });
+            option.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+        });
         #endregion
 
         #region DBContext
@@ -56,7 +83,6 @@ public static class Startup
         builder.Services.AddTransient<ICategoryService, CategoryService>();
         builder.Services.AddTransient<IColorService, ColorService>();
         builder.Services.AddTransient<IImageService, ImageService>();
-        builder.Services.AddTransient<IFurnitureService, FurnitureService>();
         builder.Services.AddTransient<IUserService, UserService>();
         #endregion
 
@@ -109,14 +135,14 @@ public static class Startup
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.SeedRolesToDatabase();
+        app.SeedRolesToDatabase().Wait();
     }
 
-    private static async void SeedRolesToDatabase(this WebApplication app)
+    private static async Task SeedRolesToDatabase(this WebApplication app)
     {
         var scope = app.Services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var roles = new[] { "Admin", "User" };
+        var roles = new[] { "Admin", "User", "SuperAdmin" };
         foreach (var role in roles)
         {
             if (!roleManager.RoleExistsAsync(role).Result)
@@ -139,7 +165,7 @@ public static class Startup
             var createAdmin = await userManager.CreateAsync(admin, adminPassword);
             if (createAdmin.Succeeded)
             {
-                await userManager.AddToRoleAsync(admin, "Admin");
+                await userManager.AddToRoleAsync(admin, "SuperAdmin");
             }
         }
     }

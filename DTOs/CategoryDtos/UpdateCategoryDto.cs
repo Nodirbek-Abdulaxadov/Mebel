@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Entities;
+using DTOs.Extended;
 
 namespace DTOs.CategoryDtos;
 public class UpdateCategoryDto : AddCategoryDto
@@ -9,14 +10,8 @@ public class UpdateCategoryDto : AddCategoryDto
         => new()
         {
             Id = categoryDto.Id,
-            Name = categoryDto.Name,
-            UpdatedAt = DateTime.Now
-        };
-
-    public static explicit operator CategoryDto(UpdateCategoryDto categoryDto)
-        => new()
-        {
-            Id = categoryDto.Id,
-            Name = categoryDto.Name
+            NameUz = categoryDto.NameUz,
+            NameRu = categoryDto.NameRu,
+            UpdatedAt = LocalTime.GetUtc5Time()
         };
 }

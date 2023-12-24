@@ -1,5 +1,5 @@
 ﻿using DTOs.UserDtos;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace BusinessLogicLayer.Interfaces;
 public interface IUserService
@@ -11,4 +11,7 @@ public interface IUserService
     Task ChangePasswordAsync(ChangePasswordDto dto);
     Task ConfirmPhoneNumberAsync(ConfirmPhoneNumberDto dto);
     Task SendOtpAsync(SendOtpDto dto);
+    Task SetProfilePictureAsync(IFormFile file, string userId);
+    Task UpdateProfileImageAsync(IFormFile file, string userId);
+    Task DeleteProfilePictureAsync(string userId);
 }

@@ -5,6 +5,8 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using DTOs.UserDtos;
 using Messager.EskizUz;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,13 +20,17 @@ namespace BusinessLogicLayer.Services;
 public class UserService(UserManager<User> userManager,
                           SignInManager<User> signInManager,
                           IConfiguration configuration,
-                          IUnitOfWork unitOfWork)
+                          IUnitOfWork unitOfWork,
+                          IWebHostEnvironment webHostEnvironment,
+                          IImageService imageService)
     : IUserService
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly SignInManager<User> _signInManager = signInManager;
     private readonly IConfiguration _configuration = configuration;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
+    private readonly IImageService _imageService = imageService;
     #endregion
 
     /// <summary>
@@ -153,7 +159,7 @@ public class UserService(UserManager<User> userManager,
         }
 
         await _userManager.RemoveAuthenticationTokenAsync(user, _configuration["Jwt:Issuer"]??"", "Token");
-
+        await DeleteProfilePictureAsync(user.Id);
         var result = await _userManager.DeleteAsync(user);
         if (!result.Succeeded)
         {
@@ -180,7 +186,7 @@ public class UserService(UserManager<User> userManager,
             throw new MarketException("Invalid data");
         }
 
-        var user = await _userManager.FindByNameAsync(dto.PhoneNumber.Replace("+", ""));
+        var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
         if (user is null)
         {
             throw new ArgumentNullException("User not found");
@@ -208,8 +214,12 @@ public class UserService(UserManager<User> userManager,
         return new LoginResult()
         {
             FullName = user.FullName,
-            PhoneNumber = user.PhoneNumber,
-            Token = token
+            PhoneNumber = user.PhoneNumber??"",
+            Token = token,
+            AvatarUrl = user.AvatarUrl,
+            Address = user.Address,
+            BirthDate = user.BirthDate,
+            Gender = user.Gender,
         };
     }
 
@@ -291,5 +301,68 @@ public class UserService(UserManager<User> userManager,
 
         _unitOfWork.OtpModels.Add(otpModel);
         await _unitOfWork.SaveAsync();
+    }
+
+    /// <summary>
+    /// Set profile picture using image service
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public async Task SetProfilePictureAsync(IFormFile file, string userId)
+    {
+        var folder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+        var domain = _configuration["Domain"]??"";
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ArgumentNullException("User not found");
+        }
+
+        user.AvatarUrl = await _imageService.UploadAsync(file, folder, domain);
+        await _userManager.UpdateAsync(user);
+    }
+
+    /// <summary>
+    /// Update profile picture using image service
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public async Task UpdateProfileImageAsync(IFormFile file, string userId)
+    {
+        var folder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+        var domain = _configuration["Domain"] ?? "";
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ArgumentNullException("User not found");
+        }
+
+        await _imageService.DeleteAsync(user.AvatarUrl, folder);
+        user.AvatarUrl = await _imageService.UploadAsync(file, folder, domain);
+        await _userManager.UpdateAsync(user);
+    }
+
+    /// <summary>
+    /// Delete profile picture using image service
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public async Task DeleteProfilePictureAsync(string userId)
+    {
+        var folder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ArgumentNullException("User not found");
+        }
+
+        await _imageService.DeleteAsync(user.AvatarUrl, folder);
+        user.AvatarUrl = "";
+        await _userManager.UpdateAsync(user);
     }
 }

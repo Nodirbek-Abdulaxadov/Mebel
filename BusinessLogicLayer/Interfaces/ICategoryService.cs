@@ -1,13 +1,14 @@
 ﻿using BusinessLogicLayer.Extended;
 using DTOs.CategoryDtos;
+using DTOs.Extended;
 
 namespace BusinessLogicLayer.Interfaces;
 public interface ICategoryService
 {
-    Task<List<CategoryDto>> GetAllAsync();
-    Task<PagedList<CategoryDto>> GetAllAsync(int pageSize, int pageNumber);
-    Task<CategoryDto> GetByIdAsync(int id);
-    Task<CategoryDto> CreateAsync(AddCategoryDto categoryDto);
-    Task<CategoryDto> UpdateAsync(UpdateCategoryDto categoryDto);
-    Task DeleteAsync(int id);
+    Task<List<CategoryDto>> GetAllAsync(Language language);
+    Task<PagedList<CategoryDto>> GetAllAsync(int pageSize, int pageNumber, Language language);
+    Task<CategoryDto> GetByIdAsync(int id, Language language);
+    Task<CategoryDto> CreateAsync(AddCategoryDto categoryDto, Language language);
+    Task<CategoryDto> UpdateAsync(UpdateCategoryDto categoryDto, Language language);
+    Task ActionAsync(int id, ActionType action);
 }

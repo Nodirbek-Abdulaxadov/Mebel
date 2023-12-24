@@ -25,10 +25,10 @@ public class Repository<T>(AppDbContext dbContext)
         _entities.Remove(entity);
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
-        => await _entities.AsNoTracking()
-                          .OrderByDescending(i => i.UpdatedAt)
-                          .ToListAsync();
+    public Task<IQueryable<T>> GetAllAsync()
+        => Task.FromResult(_entities.AsNoTracking()
+                                    .OrderByDescending(i => i.UpdatedAt)
+                                    .AsQueryable());
 
     public async Task<T?> GetByIdAsync(int id)
         => await _entities.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);

@@ -9,7 +9,7 @@ public class AddColorDto
     public static implicit operator Color(AddColorDto addColorDto)
         => new()
         {
-            Name = addColorDto.Name,
+            NameUz = addColorDto.Name,
             HexCode = addColorDto.HexCode
         };
 }

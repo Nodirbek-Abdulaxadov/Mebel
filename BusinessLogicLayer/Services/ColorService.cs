@@ -103,7 +103,7 @@ public class ColorService
     /// <param name="colorDto"></param>
     /// <returns></returns>
     /// <exception cref="MarketException"></exception>
-    public async Task<ColorDto> UpdateAsync(ColorDto colorDto)
+    public async Task<ColorDto> UpdateAsync(UpdateColorDto colorDto)
     {
         var color = await _unitOfWork.Colors.GetByIdAsync(colorDto.Id);
         if (color is null)

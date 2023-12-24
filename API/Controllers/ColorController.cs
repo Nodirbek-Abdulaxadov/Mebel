@@ -73,7 +73,7 @@ public class ColorController(IColorService colorService)
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(ColorDto color)
+    public async Task<IActionResult> Put(UpdateColorDto color)
     {
         try
         {
