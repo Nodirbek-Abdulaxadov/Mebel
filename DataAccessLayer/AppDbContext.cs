@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer;
-public class AppDbContext(DbContextOptions<AppDbContext> options) 
-    : IdentityDbContext<User>(options)
+public class AppDbContext : IdentityDbContext<User>
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) 
+        : base(options)
+    {
+        Database.EnsureCreated();
+    }
+
     public DbSet<Category> Categories { get; set; }
     public DbSet<Furniture> Furnitures { get; set; }
     public DbSet<Image> Images { get; set; }
