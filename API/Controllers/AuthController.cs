@@ -185,7 +185,7 @@ public class AuthController(IUserService userService)
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SetProfileImage([FromRoute] string userId, [FromForm] IFormFile file)
+    public async Task<IActionResult> SetProfileImage([FromRoute] string userId, [FromBody] IFormFile file)
     {
         try
         {
@@ -210,7 +210,7 @@ public class AuthController(IUserService userService)
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> ChangeProfileImage([FromRoute] string userId, [FromForm] IFormFile file)
+    public async Task<IActionResult> ChangeProfileImage([FromRoute] string userId, [FromBody] IFormFile file)
     {
         try
         {
