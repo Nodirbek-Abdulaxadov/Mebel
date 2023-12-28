@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 namespace API;
@@ -113,7 +114,9 @@ public static class Startup
                     ValidAudience = jwtIssuer,
                     ValidateLifetime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-                    ValidateIssuerSigningKey = true
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    RoleClaimType = ClaimTypes.Role
                 };
             });
 
@@ -156,7 +159,11 @@ public static class Startup
         {
             UserName = "+998996555744",
             PhoneNumberConfirmed = true,
-            PhoneNumber = "+998996555744"
+            PhoneNumber = "+998996555744",
+            Address = "Database",
+            AvatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNq-fhMeQRIAFfcfgPFaQDO8yTQ_SOW1-6raA_0HgiiKDJTV0TkDiojPT98h40g8T4FAk&usqp=CAU",
+            BirthDate = DateOnly.Parse(DateTime.Now.ToShortDateString()),
+            Gender = 0
         };
         var adminPassword = "Admin.123$";
         var user = await userManager.FindByNameAsync(admin.UserName);

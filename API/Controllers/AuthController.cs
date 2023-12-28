@@ -1,6 +1,7 @@
 ﻿using BusinessLogicLayer.Extended;
 using BusinessLogicLayer.Interfaces;
 using DTOs.UserDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -12,6 +13,7 @@ public class AuthController(IUserService userService)
     private readonly IUserService _userService = userService;
 
     [HttpPost("login")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,6 +40,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,6 +67,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPost("send-otp")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -85,6 +89,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPost("verify-otp")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -110,8 +115,10 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPut("logout")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Logout([FromBody] LoginUserDto dto)
     {
@@ -131,8 +138,10 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPut("change-password")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
@@ -157,7 +166,9 @@ public class AuthController(IUserService userService)
     }
 
     [HttpDelete("delete")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete([FromBody] LoginUserDto dto)
@@ -182,7 +193,9 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPost("profile/set-avatar/{userId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SetProfileImage([FromRoute] string userId, [FromBody] IFormFile file)
@@ -207,8 +220,10 @@ public class AuthController(IUserService userService)
     }
 
     [HttpGet("profile/change-avatar/{userId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ChangeProfileImage([FromRoute] string userId, [FromBody] IFormFile file)
     {
@@ -232,8 +247,10 @@ public class AuthController(IUserService userService)
     }
 
     [HttpDelete("profile/delete-avatar/{userId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteProfileImage([FromRoute] string userId)
     {

@@ -130,17 +130,18 @@ public class UserService(UserManager<User> userManager,
             PhoneNumber = dto.PhoneNumber
         };
 
-        await _userManager.SetUserNameAsync(user, dto.PhoneNumber.Replace("+", ""));
+        await _userManager.SetUserNameAsync(user, dto.PhoneNumber);
         var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)
         {
-            throw new MarketException("Failed to create user");
+            throw new MarketException($"Failed to create user: {string.Join("\n", result.Errors
+                                                                                  .Select(er => er.Description))}");
         }
 
         result = await _userManager.AddToRoleAsync(user, "User");
         if (!result.Succeeded)
         {
-            throw new MarketException("Failed to add user to role");
+            throw new MarketException($"Failed to add user to role: {string.Join("\n", result.Errors)}");
         }
     }
 
