@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "User, Admin, SuperAdmin")]
 public class AuthController(IUserService userService)
     : ControllerBase
 {
@@ -115,7 +116,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPut("logout")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -138,7 +139,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPut("change-password")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -166,7 +167,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpDelete("delete")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -193,7 +194,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpPost("profile/set-avatar/{userId}")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -220,7 +221,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpGet("profile/change-avatar/{userId}")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -247,7 +248,7 @@ public class AuthController(IUserService userService)
     }
 
     [HttpDelete("profile/delete-avatar/{userId}")]
-    [Authorize]
+    [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

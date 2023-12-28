@@ -102,10 +102,13 @@ public static class Startup
         #region JWT
         var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
         var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>()??"key";
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new()
                 {
                     ValidateIssuer = true,
@@ -113,8 +116,8 @@ public static class Startup
                     ValidateAudience = true,
                     ValidAudience = jwtIssuer,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                     ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                     ClockSkew = TimeSpan.Zero,
                     RoleClaimType = ClaimTypes.Role
                 };

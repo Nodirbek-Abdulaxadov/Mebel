@@ -47,7 +47,7 @@ public class UserService(UserManager<User> userManager,
             throw new ArgumentNullException(nameof(dto));
         }
 
-        var user = await _userManager.FindByNameAsync(dto.PhoneNumber.Replace("+", ""));
+        var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
         if (user is null)
         {
             throw new ArgumentNullException("User not found");
@@ -71,7 +71,7 @@ public class UserService(UserManager<User> userManager,
     /// <exception cref="MarketException"></exception>
     public async Task ConfirmPhoneNumberAsync(ConfirmPhoneNumberDto dto)
     {
-        var user = await _userManager.FindByNameAsync(dto.PhoneNumber.Replace("+", ""));
+        var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
         if (user is null)
         {
             throw new ArgumentNullException("User not found");
@@ -127,7 +127,9 @@ public class UserService(UserManager<User> userManager,
         var user = new User()
         {
             FullName = dto.FullName,
-            PhoneNumber = dto.PhoneNumber
+            PhoneNumber = dto.PhoneNumber,
+            Address = dto.Address,
+            Gender = dto.Gender
         };
 
         await _userManager.SetUserNameAsync(user, dto.PhoneNumber);
@@ -153,7 +155,7 @@ public class UserService(UserManager<User> userManager,
     /// <exception cref="ArgumentException"></exception>
     public async Task DeleteAccountAsync(LoginUserDto dto)
     {
-        var user = await _userManager.FindByNameAsync(dto.PhoneNumber.Replace("+", ""));
+        var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
         if (user is null)
         {
             throw new ArgumentException("User not found");
@@ -232,7 +234,7 @@ public class UserService(UserManager<User> userManager,
     /// <exception cref="ArgumentNullException"></exception>
     public async Task LogoutAsync(LoginUserDto dto)
     {
-        var user = await _userManager.FindByNameAsync(dto.PhoneNumber.Replace("+", ""));
+        var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
         if (user is null)
         {
             throw new ArgumentNullException("User not found");
