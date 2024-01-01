@@ -12,7 +12,7 @@ public class User : IdentityUser
     public Gender Gender { get; set; } = Gender.Unknown;
 
     [Required]
-    public DateOnly BirthDate { get; set; }
+    public DateTime BirthDate { get; set; }
 
     public string AvatarUrl { get; set; } = string.Empty;
 

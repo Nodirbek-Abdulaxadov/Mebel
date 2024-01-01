@@ -155,4 +155,18 @@ public class CategoryService(IUnitOfWork unitOfWork)
         }
         return model.ToDto(language);
     }
+
+    public async Task<List<CategoryDto>> GetArchivedAsync(Language language)
+    {
+        var categories = await _unitOfWork.Categories.GetArchivedsAsync();
+        var categoryDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return categoryDtos;
+    }
+
+    public async Task<PagedList<CategoryDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language)
+    {
+        var categories = await _unitOfWork.Categories.GetArchivedsAsync();
+        var categoryDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return new PagedList<CategoryDto>(categoryDtos, categoryDtos.Count, pageNumber, pageSize);
+    }
 }

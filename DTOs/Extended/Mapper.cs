@@ -9,6 +9,7 @@ public static class Mapper
         => new()
         {
             Id = category.Id,
+            ImageUrl = category.ImageUrl,
             Name = language switch
             {
                 Language.Uz => category.NameUz,
@@ -28,5 +29,13 @@ public static class Mapper
                 _ => color.NameUz
             },
             HexCode = color.HexCode
+        };
+
+    public static Language ToLanguage(this string lang)
+        => lang.ToLower() switch
+        {
+            "uz" => Language.Uz,
+            "ru" => Language.Ru,
+            _ => Language.Uz
         };
 }

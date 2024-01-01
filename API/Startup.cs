@@ -1,4 +1,6 @@
-﻿using BusinessLogicLayer.Interfaces;
+﻿using Asp.Versioning;
+using AspNetCoreRateLimit;
+using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Services;
 using DataAccessLayer;
 using DataAccessLayer.Entities;
@@ -125,12 +127,34 @@ public static class Startup
 
         #endregion
 
+        #region Add rate limiting to DI services
+
+        builder.Services.Configure<IpRateLimitOptions>
+            (builder.Configuration.GetSection("IpRateLimit"));
+        builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+        builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+        builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        builder.Services.AddMemoryCache();
+        builder.Services.AddHttpContextAccessor();
+        #endregion
+
+        #region API Versioning
+        builder.Services.AddApiVersioning(options =>
+        {
+            options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+        });
+        #endregion
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 
     public static void AddMiddleware(this WebApplication app)
     {
+        app.UseIpRateLimiting();
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseHsts();
@@ -140,7 +164,10 @@ public static class Startup
         app.UseStaticFiles();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapControllers();
+        var versionSet = app.NewApiVersionSet()
+                            .HasApiVersion(new ApiVersion(1, 0))
+                            .Build();
+        app.MapControllers().WithApiVersionSet(versionSet);
         app.SeedRolesToDatabase().Wait();
     }
 
@@ -165,7 +192,7 @@ public static class Startup
             PhoneNumber = "+998996555744",
             Address = "Database",
             AvatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNq-fhMeQRIAFfcfgPFaQDO8yTQ_SOW1-6raA_0HgiiKDJTV0TkDiojPT98h40g8T4FAk&usqp=CAU",
-            BirthDate = DateOnly.Parse(DateTime.Now.ToShortDateString()),
+            BirthDate = DateTime.Now,
             Gender = 0
         };
         var adminPassword = "Admin.123$";

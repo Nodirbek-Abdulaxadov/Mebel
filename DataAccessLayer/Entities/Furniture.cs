@@ -12,6 +12,8 @@ public class Furniture : BaseEntity
     public string DescriptionUz { get; set; } = string.Empty;
     [StringLength(1000)]
     public string DescriptionRu { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public int PreparationDays { get; set; }
     [Required]
     public decimal Price { get; set; }
     [Required]
