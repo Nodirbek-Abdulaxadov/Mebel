@@ -3,10 +3,11 @@ using BusinessLogicLayer.Interfaces;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using DTOs.ColorDtos;
+using DTOs.Extended;
 
 namespace BusinessLogicLayer.Services;
-public class ColorService
-    (IUnitOfWork unitOfWork): IColorService
+public class ColorService(IUnitOfWork unitOfWork)
+    : IColorService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -15,69 +16,92 @@ public class ColorService
     /// </summary>
     /// <param name="colorDto"></param>
     /// <returns></returns>
-    public async Task<ColorDto> CreatAsync(AddColorDto colorDto)
+    /// <exception cref="MarketException"></exception>
+    public async Task<ColorDto> CreateAsync(AddColorDto colorDto,
+                                               Language language)
     {
         if (colorDto is null)
         {
-            throw new MarketException(nameof(colorDto));
+            throw new MarketException("Color was null");
         }
 
-        var color = (Color)colorDto;
-        if (!color.IsValidColor())
+        var model = (Color)colorDto;
+        if (!model.IsValidColor())
         {
             throw new MarketException("Color is not valid");
         }
 
-        var colors = await _unitOfWork.Colors.GetAllAsync();
-        if (color.IsExist(colors))
+        var categories = await _unitOfWork.Colors.GetAllAsync();
+        if (model.IsExist(categories))
         {
-            throw new MarketException("Color is already exist");
+            throw new MarketException("Color already exists");
         }
 
-        _unitOfWork.Colors.Add(color);
+        model = _unitOfWork.Colors.Add(model);
         await _unitOfWork.SaveAsync();
-        return (ColorDto)color;
+        return model.ToDto(language);
     }
 
     /// <summary>
-    /// Delete color by id
+    /// Action with color (archive, unarchive, delete)
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="action"></param>
     /// <returns></returns>
     /// <exception cref="MarketException"></exception>
-    public async Task DeleteAsync(int id)
+    public async Task ActionAsync(int id, ActionType action)
     {
         var color = await _unitOfWork.Colors.GetByIdAsync(id);
         if (color is null)
         {
-            throw new MarketException("Color is not found");
+            throw new MarketException("Color not found");
         }
 
-        _unitOfWork.Colors.Delete(id);
+        switch (action)
+        {
+            case ActionType.Archive:
+                {
+                    color.IsActive = false;
+                    _unitOfWork.Colors.Update(color);
+                }
+                break;
+            case ActionType.UnArchive:
+                {
+                    color.IsActive = true;
+                    _unitOfWork.Colors.Update(color);
+                }
+                break;
+            case ActionType.Delete:
+                {
+                    _unitOfWork.Colors.Delete(id);
+                }
+                break;
+        }
         await _unitOfWork.SaveAsync();
     }
 
     /// <summary>
-    /// Get all colors
-    /// </summary>
-    /// <returns></returns>
-    public async Task<List<ColorDto>> GetAllAsync()
-    {
-        var colors = await _unitOfWork.Colors.GetAllAsync();
-        return colors.Select(c => (ColorDto)c).ToList();
-    }
-
-    /// <summary>
-    /// Get all colors with pagination
+    /// Get all categories with pagination
     /// </summary>
     /// <param name="pageSize"></param>
     /// <param name="pageNumber"></param>
     /// <returns></returns>
-    public async Task<PagedList<ColorDto>> GetAllAsync(int pageSize, int pageNumber)
+    public async Task<PagedList<ColorDto>> GetAllAsync(int pageSize, int pageNumber, Language language)
     {
-        var colors = await _unitOfWork.Colors.GetAllAsync();
-        var dtos = colors.Select(c => (ColorDto)c).ToList();
-        return new PagedList<ColorDto>(dtos, dtos.Count, pageNumber, pageSize);
+        var categories = await _unitOfWork.Colors.GetAllAsync();
+        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return new PagedList<ColorDto>(colorDtos, colorDtos.Count, pageNumber, pageSize);
+    }
+
+    /// <summary>
+    /// Get all categories
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<ColorDto>> GetAllAsync(Language language)
+    {
+        var categories = await _unitOfWork.Colors.GetAllAsync();
+        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return colorDtos;
     }
 
     /// <summary>
@@ -86,15 +110,11 @@ public class ColorService
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="MarketException"></exception>
-    public async Task<ColorDto> GetByIdAsync(int id)
+    public async Task<ColorDto> GetByIdAsync(int id, Language language)
     {
         var color = await _unitOfWork.Colors.GetByIdAsync(id);
-        if (color is null)
-        {
-            throw new MarketException("Color is not found");
-        }
-
-        return (ColorDto)color;
+        return color is null ?
+            throw new MarketException("Color not found") : color.ToDto(language);
     }
 
     /// <summary>
@@ -103,28 +123,53 @@ public class ColorService
     /// <param name="colorDto"></param>
     /// <returns></returns>
     /// <exception cref="MarketException"></exception>
-    public async Task<ColorDto> UpdateAsync(UpdateColorDto colorDto)
+    public async Task<ColorDto> UpdateAsync(UpdateColorDto colorDto,
+                                               Language language)
     {
+        if (colorDto is null)
+        {
+            throw new MarketException("Color was null");
+        }
+
         var color = await _unitOfWork.Colors.GetByIdAsync(colorDto.Id);
         if (color is null)
         {
-            throw new MarketException("Color is not found");
+            throw new MarketException("Color not found");
         }
 
-        color = (Color)colorDto;
-        if (!color.IsValidColor())
+        var model = (Color)colorDto;
+        if (!model.IsValidColor())
         {
             throw new MarketException("Color is not valid");
         }
 
-        var colors = await _unitOfWork.Colors.GetAllAsync();
-        if (color.IsNotUnique(colors))
+        var categories = await _unitOfWork.Colors.GetAllAsync();
+        if (model.IsNotUnique(categories))
         {
-            throw new MarketException("Color is already exist");
+            throw new MarketException("Color already exists");
         }
 
-        _unitOfWork.Colors.Update(color);
+        _unitOfWork.Colors.Update(model);
         await _unitOfWork.SaveAsync();
-        return (ColorDto)color;
+        model = await _unitOfWork.Colors.GetByIdAsync(colorDto.Id);
+        if (model is null)
+        {
+            throw new MarketException("Color not found");
+        }
+        return model.ToDto(language);
+    }
+
+    public async Task<List<ColorDto>> GetArchivedAsync(Language language)
+    {
+        var categories = await _unitOfWork.Colors.GetArchivedsAsync();
+        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return colorDtos;
+    }
+
+    public async Task<PagedList<ColorDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language)
+    {
+        var categories = await _unitOfWork.Colors.GetArchivedsAsync();
+        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
+        return new PagedList<ColorDto>(colorDtos, colorDtos.Count, pageNumber, pageSize);
     }
 }

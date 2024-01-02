@@ -27,6 +27,10 @@ public class ImageService : IImageService
         {
             File.Delete(filePath);
         }
+        else
+        {
+            throw new FileNotFoundException("File not found", filePath);
+        }
         return Task.CompletedTask;
     }
 
@@ -39,6 +43,11 @@ public class ImageService : IImageService
     /// <returns></returns>
     public async Task<string> UploadAsync(IFormFile file, string folder, string domain)
     {
+        if (file is null)
+        {
+            throw new ArgumentNullException(nameof(file));
+        }
+
         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
         string filePath = Path.Combine(folder, "uploads", fileName);
 

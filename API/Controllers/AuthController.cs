@@ -1,12 +1,14 @@
-﻿using BusinessLogicLayer.Extended;
+﻿using Asp.Versioning;
+using BusinessLogicLayer.Extended;
 using BusinessLogicLayer.Interfaces;
 using DTOs.UserDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
-[Route("api/[controller]")]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Authorize(Roles = "User, Admin, SuperAdmin")]
 public class AuthController(IUserService userService)
     : ControllerBase
@@ -15,7 +17,7 @@ public class AuthController(IUserService userService)
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginResult),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
