@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 namespace BusinessLogicLayer.Interfaces;
 public interface IUserService
 {
-    Task CreateAsync(RegisterUserDto dto);
+    Task CreateAsync(RegisterUserDto dto, string role);
     Task<LoginResult> LoginAsync(LoginUserDto dto);
     Task DeleteAccountAsync(LoginUserDto dto);
     Task LogoutAsync(LoginUserDto dto);

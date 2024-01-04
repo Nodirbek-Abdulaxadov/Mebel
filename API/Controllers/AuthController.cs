@@ -52,7 +52,7 @@ public class AuthController(IUserService userService)
     {
         try
         {
-            await _userService.CreateAsync(request);
+            await _userService.CreateAsync(request, UserRoles.User);
             return Ok();
         }
         catch(ArgumentNullException ex)

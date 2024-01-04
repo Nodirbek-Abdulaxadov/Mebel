@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Entities;
+using DTOs.Extended;
 
 namespace DTOs.ColorDtos;
 public class UpdateColorDto : BaseDto
@@ -13,6 +14,7 @@ public class UpdateColorDto : BaseDto
             Id = color.Id,
             NameUz = color.NameUz,
             NameRu = color.NameRu,
-            HexCode = color.HexCode
+            HexCode = color.HexCode,
+            UpdatedAt = LocalTime.GetUtc5Time()
         };
 }

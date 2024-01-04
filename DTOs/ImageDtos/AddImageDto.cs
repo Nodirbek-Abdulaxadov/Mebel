@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Entities;
+using DTOs.Extended;
 
 namespace DTOs.ImageDtos;
 public class AddImageDto
@@ -10,6 +11,8 @@ public class AddImageDto
         => new()
         {
             Url = addImageDto.Url,
-            FurnitureId = addImageDto.FurnitureId
+            FurnitureId = addImageDto.FurnitureId,
+            CreatedAt = LocalTime.GetUtc5Time(),
+            UpdatedAt = LocalTime.GetUtc5Time()
         };
 }

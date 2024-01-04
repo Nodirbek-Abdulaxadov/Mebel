@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Entities;
+using DTOs.Extended;
 
 namespace DTOs.ColorDtos;
 public class AddColorDto
@@ -12,6 +13,8 @@ public class AddColorDto
         {
             NameUz = addColorDto.NameUz,
             NameRu = addColorDto.NameRu,
-            HexCode = addColorDto.HexCode
+            HexCode = addColorDto.HexCode,
+            CreatedAt = LocalTime.GetUtc5Time(),
+            UpdatedAt = LocalTime.GetUtc5Time()
         };
 }

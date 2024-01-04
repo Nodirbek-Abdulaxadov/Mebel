@@ -112,7 +112,7 @@ public class UserService(UserManager<User> userManager,
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="MarketException"></exception>
-    public async Task CreateAsync(RegisterUserDto dto)
+    public async Task CreateAsync(RegisterUserDto dto, string role)
     {
         if (dto is null)
         {
@@ -140,7 +140,7 @@ public class UserService(UserManager<User> userManager,
                                                                                   .Select(er => er.Description))}");
         }
 
-        result = await _userManager.AddToRoleAsync(user, "User");
+        result = await _userManager.AddToRoleAsync(user, role);
         if (!result.Succeeded)
         {
             throw new MarketException($"Failed to add user to role: {string.Join("\n", result.Errors)}");
@@ -266,6 +266,8 @@ public class UserService(UserManager<User> userManager,
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
             }),
             Expires = DateTime.UtcNow.AddMonths(1),
+            Audience = _configuration["Jwt:Issuer"]??"",
+            Issuer = _configuration["Jwt:Issuer"]??"",
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
