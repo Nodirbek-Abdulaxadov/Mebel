@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataAccessLayer.Entities.MM;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataAccessLayer.Entities;
 public class Furniture : BaseEntity
@@ -22,8 +23,8 @@ public class Furniture : BaseEntity
     public Category? Category { get; set; } = new();
     public ICollection<Image> Images { get; set; } 
         = new List<Image>();
-    public ICollection<Color>? Colors { get; set; }
-        = new List<Color>();
+    public ICollection<FurnitureColor>? Colors { get; set; }
+        = new List<FurnitureColor>();
     public ICollection<User> LikedUsers { get; set; } 
         = new List<User>();
 }

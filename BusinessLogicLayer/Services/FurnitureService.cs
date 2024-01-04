@@ -5,6 +5,7 @@ using DataAccessLayer.Interfaces;
 using DTOs.FurnitureDtos;
 using DTOs.Extended;
 using Microsoft.AspNetCore.Hosting;
+using DataAccessLayer.Entities.MM;
 
 namespace BusinessLogicLayer.Services;
 
@@ -54,24 +55,33 @@ public class FurnitureService(IUnitOfWork unitOfWork,
             {
                 throw new MarketException("Color not found");
             }
-            model.Colors!.Add(color);
+            model.Colors!.Add(new FurnitureColor()
+            {
+                ColorId = colorId,
+                Color = null,
+                FurnitureId = model.Id,
+                Furniture = null
+            });
         }
+        model.Category = null;
 
         model = _unitOfWork.Furnitures.Add(model);
         await _unitOfWork.SaveAsync();
+        model = await _unitOfWork.Furnitures.GetByIdAsyncWithDependencies(model.Id);
 
         foreach (var imageUrl in furnitureDto.ImageUrls)
         {
             var image = new Image
             {
-                FurnitureId = model.Id,
+                FurnitureId = model!.Id,
+                Furniture = null,
                 Url = imageUrl
             };
             _unitOfWork.Images.Add(image);
             await _unitOfWork.SaveAsync();
         }
 
-        return model.ToDto(language);
+        return model!.ToDto(language);
     }
 
     /// <summary>
@@ -92,33 +102,27 @@ public class FurnitureService(IUnitOfWork unitOfWork,
         switch (action)
         {
             case ActionType.Archive:
-                {
-                    furniture.IsActive = false;
-                    _unitOfWork.Furnitures.Update(furniture);
-                }
+                furniture.IsActive = false;
                 break;
             case ActionType.UnArchive:
-                {
-                    furniture.IsActive = true;
-                    _unitOfWork.Furnitures.Update(furniture);
-                }
-                break;
+                furniture.IsActive = true;
+                break; 
             case ActionType.Delete:
+                var images = furniture.Images.ToList();
+                foreach (var image in images)
                 {
-                    var images = furniture.Images.ToList();
-                    foreach (var image in images)
-                    {
-                        string folder = _environment.WebRootPath;
-                        await _imageService.DeleteAsync(image.Url, folder);
-                        _unitOfWork.Images.Delete(image.Id);
-                    }
-                    _unitOfWork.Furnitures.Delete(id);
-                    await _unitOfWork.SaveAsync();
+                    string folder = _environment.WebRootPath;
+                    await _imageService.DeleteAsync(image.Url, folder);
                 }
-                break;
+                _unitOfWork.Furnitures.Delete(id);
+                await _unitOfWork.SaveAsync();
+                return;
         }
+        furniture.UpdatedAt = LocalTime.GetUtc5Time();
+        _unitOfWork.Furnitures.Update(furniture);
         await _unitOfWork.SaveAsync();
     }
+
 
     /// <summary>
     /// Get all furnitures with pagination
@@ -128,7 +132,7 @@ public class FurnitureService(IUnitOfWork unitOfWork,
     /// <returns></returns>
     public async Task<PagedList<FurnitureDto>> GetAllAsync(int pageSize, int pageNumber, Language language)
     {
-        var furnitures = await _unitOfWork.Furnitures.GetAllAsync();
+        var furnitures = await _unitOfWork.Furnitures.GetAllAsyncWithDependencies();
         var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
         return new PagedList<FurnitureDto>(furnitureDtos, furnitureDtos.Count, pageNumber, pageSize);
     }
@@ -139,7 +143,7 @@ public class FurnitureService(IUnitOfWork unitOfWork,
     /// <returns></returns>
     public async Task<List<FurnitureDto>> GetAllAsync(Language language)
     {
-        var furnitures = await _unitOfWork.Furnitures.GetAllAsync();
+        var furnitures = await _unitOfWork.Furnitures.GetAllAsyncWithDependencies();
         var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
         return furnitureDtos;
     }
@@ -171,7 +175,7 @@ public class FurnitureService(IUnitOfWork unitOfWork,
             throw new MarketException("Furniture was null");
         }
 
-        var furniture = await _unitOfWork.Furnitures.GetByIdAsync(furnitureDto.Id);
+        var furniture = await _unitOfWork.Furnitures.GetByIdAsyncWithDependencies(furnitureDto.Id);
         if (furniture is null)
         {
             throw new MarketException("Furniture not found");
@@ -189,12 +193,57 @@ public class FurnitureService(IUnitOfWork unitOfWork,
             throw new MarketException("Furniture already exists");
         }
 
+        var colorIds = furnitureDto.ColorIds
+                                   .ToHashSet()
+                                   .ToList();
+
+        var colors = await _unitOfWork.Colors.GetAllAsync();
+        foreach (var colorId in colorIds)
+        {
+            var color = colors.FirstOrDefault(c => c.Id == colorId);
+            if (color is null)
+            {
+                throw new MarketException("Color not found");
+            }
+            model.Colors!.Add(new FurnitureColor()
+            {
+                ColorId = colorId,
+                Color = null,
+                FurnitureId = model.Id,
+                Furniture = null
+            });
+        }
+        model.Category = null;
+
+        var imageDiffs = furniture.Images.Select(i => i.Url).Except(furnitureDto.ImageUrls);
+        var images = await _unitOfWork.Images.GetAllAsync();
+        foreach (var imageUrl in imageDiffs)
+        {
+            var image = images.FirstOrDefault(i => i.Url == imageUrl);
+            _unitOfWork.Images.Delete(image!.Id);
+            await _unitOfWork.SaveAsync();
+        }
+
         _unitOfWork.Furnitures.Update(model);
         await _unitOfWork.SaveAsync();
-        model = await _unitOfWork.Furnitures.GetByIdAsync(furnitureDto.Id);
+
+        model = await _unitOfWork.Furnitures.GetByIdAsyncWithDependencies(model.Id);
+
         if (model is null)
         {
             throw new MarketException("Furniture not found");
+        }
+        imageDiffs = furnitureDto.ImageUrls.Except(furniture.Images.Select(i => i.Url));
+        foreach (var imageUrl in imageDiffs)
+        {
+            var image = new Image
+            {
+                FurnitureId = model.Id,
+                Furniture = null,
+                Url = imageUrl
+            };
+            _unitOfWork.Images.Add(image);
+            await _unitOfWork.SaveAsync();
         }
         return model.ToDto(language);
     }

@@ -60,9 +60,9 @@ public static class Mapper
             PreparationDays = furniture.PreparationDays,
             InQueue = furniture.InQueue,
             Price = furniture.Price,
-            Category = furniture.Category,
+            Category = furniture.Category!.ToDto(language),
             Images = furniture.Images.Select(i => i.Url).ToList(),
-            Colors = furniture.Colors?.Select(c => c.ToDto(language)).ToList(),
+            Colors = furniture.Colors?.Select(c => c.Color!.ToDto(language)).ToList(),
             LikesCount = furniture.LikedUsers.Count
         };
 }

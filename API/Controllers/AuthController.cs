@@ -222,7 +222,7 @@ public class AuthController(IUserService userService)
         }
     }
 
-    [HttpGet("profile/change-avatar/{userId}")]
+    [HttpPut("profile/change-avatar/{userId}")]
     [Authorize(Roles = "User, Admin, SuperAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

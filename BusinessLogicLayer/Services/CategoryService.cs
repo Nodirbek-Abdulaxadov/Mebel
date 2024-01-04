@@ -74,6 +74,7 @@ public class CategoryService(IUnitOfWork unitOfWork)
                     _unitOfWork.Categories.Delete(id);
                 } break;
         }
+        category.UpdatedAt = LocalTime.GetUtc5Time();
         await _unitOfWork.SaveAsync();
     }
 

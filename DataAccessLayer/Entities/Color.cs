@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataAccessLayer.Entities.MM;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataAccessLayer.Entities;
 public class Color : BaseEntity
@@ -11,5 +12,6 @@ public class Color : BaseEntity
     [Required, StringLength(7)]
     public string HexCode { get; set; } = string.Empty;
 
-    public ICollection<Furniture>? Furnitures { get; set; }
+    public ICollection<FurnitureColor>? Furnitures { get; set; }
+        = new List<FurnitureColor>();
 }

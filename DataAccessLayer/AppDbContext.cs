@@ -1,6 +1,8 @@
 ﻿using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.MM;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DataAccessLayer;
 public class AppDbContext : IdentityDbContext<User>
@@ -8,7 +10,7 @@ public class AppDbContext : IdentityDbContext<User>
     public AppDbContext(DbContextOptions<AppDbContext> options) 
         : base(options)
     {
-        Database.EnsureCreated();
+        //Database.EnsureCreated();
     }
 
     public DbSet<Category> Categories { get; set; }
@@ -23,18 +25,26 @@ public class AppDbContext : IdentityDbContext<User>
             .HasMany(c => c.Furnitures)
             .WithOne(f => f.Category)
             .HasForeignKey(f => f.CategoryId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Furniture>()
             .HasMany(f => f.Images)
             .WithOne(i => i.Furniture)
             .HasForeignKey(i => i.FurnitureId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<Furniture>()
-            .HasMany(f => f.Colors)
+        builder.Entity<FurnitureColor>()
+               .HasKey(fc => new { fc.FurnitureId, fc.ColorId });
+
+        builder.Entity<FurnitureColor>()
+            .HasOne(fc => fc.Furniture)
+            .WithMany(f => f.Colors)
+            .HasForeignKey(fc => fc.FurnitureId);
+
+        builder.Entity<FurnitureColor>()
+            .HasOne(fc => fc.Color)
             .WithMany(c => c.Furnitures)
-            .UsingEntity(e => e.ToTable("FurnitureColors"));
+            .HasForeignKey(fc => fc.ColorId);
 
         builder.Entity<User>()
             .HasMany(u => u.LikedItems)
@@ -45,7 +55,7 @@ public class AppDbContext : IdentityDbContext<User>
             .HasMany(u => u.Feedbacks)
             .WithOne(f => f.User)
             .HasForeignKey(f => f.UserId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(builder);
     }

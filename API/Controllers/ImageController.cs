@@ -1,11 +1,13 @@
 ﻿using Asp.Versioning;
 using BusinessLogicLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "User, Admin, SuperAdmin")]
 public class ImageController(IImageService imageService,
                              IWebHostEnvironment environment,
                              IConfiguration configuration)

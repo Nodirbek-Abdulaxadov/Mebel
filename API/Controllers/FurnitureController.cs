@@ -1,31 +1,28 @@
-﻿using Asp.Versioning;
-using BusinessLogicLayer.Extended;
+﻿using BusinessLogicLayer.Extended;
 using BusinessLogicLayer.Interfaces;
-using DTOs.ColorDtos;
+using DTOs.FurnitureDtos;
 using DTOs.Extended;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers;
-
+[Route("api/[controller]")]
 [ApiController]
-[ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/[controller]")]
-public class ColorController(IColorService colorService)
+public class FurnitureController(IFurnitureService furnitureService)
     : ControllerBase
 {
-    private readonly IColorService _colorService = colorService;
+    private readonly IFurnitureService _furnitureService = furnitureService;
 
     [HttpGet("{lang}/all")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync(string lang)
     {
         try
         {
-            var categories = await _colorService.GetAllAsync(lang.ToLanguage());
+            var categories = await _furnitureService.GetAllAsync(lang.ToLanguage());
             return Ok(categories);
         }
         catch (Exception)
@@ -36,13 +33,13 @@ public class ColorController(IColorService colorService)
 
     [HttpGet("{lang}/archived/all")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetArchivedsAsync(string lang)
     {
         try
         {
-            var categories = await _colorService.GetArchivedAsync(lang.ToLanguage());
+            var categories = await _furnitureService.GetArchivedAsync(lang.ToLanguage());
             return Ok(categories);
         }
         catch (Exception)
@@ -53,7 +50,7 @@ public class ColorController(IColorService colorService)
 
     [HttpGet("{lang}/paged")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllAsync([FromRoute] string lang,
                                                  [FromQuery] int pageSize = 10,
@@ -61,7 +58,7 @@ public class ColorController(IColorService colorService)
     {
         try
         {
-            var categories = await _colorService.GetAllAsync(pageSize,
+            var categories = await _furnitureService.GetAllAsync(pageSize,
                                                             pageNumber,
                                                             lang.ToLanguage());
             var metadata = new
@@ -86,7 +83,7 @@ public class ColorController(IColorService colorService)
 
     [HttpGet("{lang}/archived/paged")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetArchivedsAsPagedAsync([FromRoute] string lang,
                                                  [FromQuery] int pageSize = 10,
@@ -95,7 +92,7 @@ public class ColorController(IColorService colorService)
         try
         {
             var categories =
-                await _colorService.GetArchivedsAsPagedListAsync(pageSize,
+                await _furnitureService.GetArchivedsAsPagedListAsync(pageSize,
                                                             pageNumber,
                                                             lang.ToLanguage());
             var metadata = new
@@ -120,15 +117,15 @@ public class ColorController(IColorService colorService)
 
     [HttpGet("{lang}/{id}")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(ColorDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FurnitureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] string lang, [FromRoute] int id)
     {
         try
         {
-            var color = await _colorService.GetByIdAsync(id, lang.ToLanguage());
-            return Ok(color);
+            var furniture = await _furnitureService.GetByIdAsync(id, lang.ToLanguage());
+            return Ok(furniture);
         }
         catch (MarketException ex)
         {
@@ -142,16 +139,15 @@ public class ColorController(IColorService colorService)
 
     [HttpPost("{lang}")]
     [Authorize(Roles = "SuperAdmin, Admin")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
-    [ProducesResponseType(typeof(ColorDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FurnitureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAsync([FromRoute] string lang, [FromBody] AddColorDto colorDto)
+    public async Task<IActionResult> CreateAsync([FromRoute] string lang, [FromBody] AddFurnitureDto furnitureDto)
     {
         try
         {
-            var result = await _colorService.CreateAsync(colorDto, lang.ToLanguage());
+            var result = await _furnitureService.CreateAsync(furnitureDto, lang.ToLanguage());
             return Ok(result);
         }
         catch (MarketException ex)
@@ -166,16 +162,16 @@ public class ColorController(IColorService colorService)
 
     [HttpPut("{lang}")]
     [Authorize(Roles = "SuperAdmin, Admin")]
-    [ProducesResponseType(typeof(ColorDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FurnitureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateAsync([FromRoute] string lang, [FromBody] UpdateColorDto colorDto)
+    public async Task<IActionResult> UpdateAsync([FromRoute] string lang, [FromBody] UpdateFurnitureDto furnitureDto)
     {
         try
         {
-            var color = await _colorService.UpdateAsync(colorDto, lang.ToLanguage());
-            return Ok(color);
+            var furniture = await _furnitureService.UpdateAsync(furnitureDto, lang.ToLanguage());
+            return Ok(furniture);
         }
         catch (MarketException ex)
         {
@@ -197,16 +193,16 @@ public class ColorController(IColorService colorService)
     {
         try
         {
-            await _colorService.ActionAsync(id, ActionType.Delete);
+            await _furnitureService.ActionAsync(id, ActionType.Delete);
             return Ok();
         }
         catch (MarketException ex)
         {
             return NotFound(ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -220,16 +216,16 @@ public class ColorController(IColorService colorService)
     {
         try
         {
-            await _colorService.ActionAsync(id, ActionType.Archive);
+            await _furnitureService.ActionAsync(id, ActionType.Archive);
             return Ok();
         }
         catch (MarketException ex)
         {
             return NotFound(ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
@@ -243,7 +239,7 @@ public class ColorController(IColorService colorService)
     {
         try
         {
-            await _colorService.ActionAsync(id, ActionType.UnArchive);
+            await _furnitureService.ActionAsync(id, ActionType.UnArchive);
             return Ok();
         }
         catch (MarketException ex)

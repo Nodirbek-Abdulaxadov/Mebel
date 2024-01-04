@@ -1,4 +1,4 @@
-﻿using DataAccessLayer.Entities;
+﻿using DTOs.CategoryDtos;
 using DTOs.ColorDtos;
 
 namespace DTOs.FurnitureDtos;
@@ -10,10 +10,8 @@ public class FurnitureDto : BaseDto
     public int PreparationDays { get; set; }
     public int InQueue { get; set; }
     public decimal Price { get; set; }
-    public Category? Category { get; set; } = new();
-    public List<string> Images { get; set; }
-        = new List<string>();
+    public CategoryDto? Category { get; set; } = new();
+    public List<string>? Images { get; set; }
     public List<ColorDto>? Colors { get; set; }
-        = new List<ColorDto>();
     public int LikesCount { get; set; }
 }

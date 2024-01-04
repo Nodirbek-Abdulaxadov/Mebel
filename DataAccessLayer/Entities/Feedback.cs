@@ -11,6 +11,4 @@ public class Feedback : BaseEntity
     public int Rating { get; set; }
     public int FurnitureId { get; set; }
     public Furniture Furniture { get; set; } = new();
-    public ICollection<Image> Images { get; set; }
-        = new List<Image>();
 }
