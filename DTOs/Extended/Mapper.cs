@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using DTOs.CategoryDtos;
 using DTOs.ColorDtos;
+using DTOs.FurnitureDtos;
 
 namespace DTOs.Extended;
 public static class Mapper
@@ -37,5 +38,31 @@ public static class Mapper
             "uz" => Language.Uz,
             "ru" => Language.Ru,
             _ => Language.Uz
+        };
+
+    public static FurnitureDto ToDto(this Furniture furniture, Language language)
+        => new()
+        {
+            Id = furniture.Id,
+            Name = language switch
+            {
+                Language.Uz => furniture.NameUz,
+                Language.Ru => furniture.NameRu,
+                _ => furniture.NameUz
+            },
+            Description = language switch
+            {
+                Language.Uz => furniture.DescriptionUz,
+                Language.Ru => furniture.DescriptionRu,
+                _ => furniture.DescriptionUz
+            },
+            Quantity = furniture.Quantity,
+            PreparationDays = furniture.PreparationDays,
+            InQueue = furniture.InQueue,
+            Price = furniture.Price,
+            Category = furniture.Category,
+            Images = furniture.Images.Select(i => i.Url).ToList(),
+            Colors = furniture.Colors?.Select(c => c.ToDto(language)).ToList(),
+            LikesCount = furniture.LikedUsers.Count
         };
 }

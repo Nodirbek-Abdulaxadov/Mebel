@@ -87,6 +87,7 @@ public static class Startup
         builder.Services.AddTransient<IColorService, ColorService>();
         builder.Services.AddTransient<IImageService, ImageService>();
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<IFurnitureService, FurnitureService>();
         #endregion
 
         #region CORS Policy for all origins

@@ -10,5 +10,5 @@ public class BaseEntity
     [Required]
     public DateTime UpdatedAt { get; set; }
     [Required]
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 }

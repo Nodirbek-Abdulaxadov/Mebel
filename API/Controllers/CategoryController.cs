@@ -141,7 +141,7 @@ public class CategoryController(ICategoryService categoryService)
     }
 
     [HttpPost("{lang}")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

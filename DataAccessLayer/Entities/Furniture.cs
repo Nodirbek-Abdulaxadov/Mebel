@@ -14,6 +14,7 @@ public class Furniture : BaseEntity
     public string DescriptionRu { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public int PreparationDays { get; set; }
+    public int InQueue { get; set; }
     [Required]
     public decimal Price { get; set; }
     [Required]
@@ -22,6 +23,7 @@ public class Furniture : BaseEntity
     public ICollection<Image> Images { get; set; } 
         = new List<Image>();
     public ICollection<Color>? Colors { get; set; }
+        = new List<Color>();
     public ICollection<User> LikedUsers { get; set; } 
         = new List<User>();
 }

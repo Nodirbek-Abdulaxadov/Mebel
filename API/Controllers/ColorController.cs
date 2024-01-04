@@ -141,7 +141,7 @@ public class ColorController(IColorService colorService)
     }
 
     [HttpPost("{lang}")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(typeof(ColorDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
