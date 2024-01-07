@@ -30,9 +30,10 @@ public class Repository<T>(AppDbContext dbContext)
                                     .OrderByDescending(i => i.UpdatedAt)
                                     .AsQueryable());
 
-    public async Task<IEnumerable<T>> GetArchivedsAsync()
+    public async Task<IEnumerable<T>> GetAllAsync(bool isActive)
         => await _entities.AsNoTracking()
-                          .Where(c => !c.IsActive)
+                          .Where(c => c.IsActive == isActive)
+                          .OrderByDescending(i => i.UpdatedAt)
                           .ToListAsync();
 
     public async Task<T?> GetByIdAsync(int id)

@@ -255,7 +255,7 @@ public class FurnitureService(IUnitOfWork unitOfWork,
     /// <returns></returns>
     public async Task<List<FurnitureDto>> GetArchivedAsync(Language language)
     {
-        var furnitures = await _unitOfWork.Furnitures.GetArchivedsAsync();
+        var furnitures = await _unitOfWork.Furnitures.GetAllAsync(false);
         var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
         return furnitureDtos;
     }
@@ -269,7 +269,7 @@ public class FurnitureService(IUnitOfWork unitOfWork,
     /// <returns></returns>
     public async Task<PagedList<FurnitureDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language)
     {
-        var furnitures = await _unitOfWork.Furnitures.GetArchivedsAsync();
+        var furnitures = await _unitOfWork.Furnitures.GetAllAsync(false);
         var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
         return new PagedList<FurnitureDto>(furnitureDtos, furnitureDtos.Count, pageNumber, pageSize);
     }

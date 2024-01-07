@@ -7,6 +7,8 @@ public interface IColorService
 {
     Task<List<ColorDto>> GetAllAsync(Language language);
     Task<List<ColorDto>> GetArchivedAsync(Language language);
+    Task<List<ColorDto>> GetActiveAsync(Language language); 
+    Task<PagedList<ColorDto>> GetActivesAsPagedListAsync(int pageSize, int pageNumber, Language language);
     Task<PagedList<ColorDto>> GetAllAsync(int pageSize, int pageNumber, Language language);
     Task<PagedList<ColorDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language);
     Task<ColorDto> GetByIdAsync(int id, Language language);

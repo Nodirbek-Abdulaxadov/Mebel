@@ -34,23 +34,6 @@ public class ColorController(IColorService colorService)
         }
     }
 
-    [HttpGet("{lang}/archived/all")]
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetArchivedsAsync(string lang)
-    {
-        try
-        {
-            var categories = await _colorService.GetArchivedAsync(lang.ToLanguage());
-            return Ok(categories);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
     [HttpGet("{lang}/paged")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
@@ -83,6 +66,23 @@ public class ColorController(IColorService colorService)
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    [HttpGet("{lang}/archived/all")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetArchivedsAsync(string lang)
+    {
+        try
+        {
+            var categories = await _colorService.GetArchivedAsync(lang.ToLanguage());
+            return Ok(categories);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 
     [HttpGet("{lang}/archived/paged")]
     [AllowAnonymous]
@@ -96,6 +96,57 @@ public class ColorController(IColorService colorService)
         {
             var categories =
                 await _colorService.GetArchivedsAsPagedListAsync(pageSize,
+                                                            pageNumber,
+                                                            lang.ToLanguage());
+            var metadata = new
+            {
+                categories.TotalCount,
+                categories.PageSize,
+                categories.PageIndex,
+                categories.TotalPages,
+                categories.HasNextPage,
+                categories.HasPreviousPage
+            };
+
+            Response.Headers["X-Pagination"] = JsonConvert.SerializeObject(metadata);
+
+            return Ok(categories.Items);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpGet("{lang}/active/all")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetActivesAsync(string lang)
+    {
+        try
+        {
+            var categories = await _colorService.GetActiveAsync(lang.ToLanguage());
+            return Ok(categories);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpGet("{lang}/active/paged")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<ColorDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetActivesAsPagedAsync([FromRoute] string lang,
+                                                 [FromQuery] int pageSize = 10,
+                                                 [FromQuery] int pageNumber = 1)
+    {
+        try
+        {
+            var categories =
+                await _colorService.GetActivesAsPagedListAsync(pageSize,
                                                             pageNumber,
                                                             lang.ToLanguage());
             var metadata = new
