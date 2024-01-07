@@ -140,6 +140,28 @@ public class ColorController(IColorService colorService)
         }
     }
 
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ColorDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
+    {
+        try
+        {
+            var color = await _colorService.GetById(id);
+            return Ok(color);
+        }
+        catch (ArgumentNullException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
     [HttpPost("{lang}")]
     [Authorize(Roles = "SuperAdmin, Admin")]
     [Authorize(Roles = "SuperAdmin, Admin")]

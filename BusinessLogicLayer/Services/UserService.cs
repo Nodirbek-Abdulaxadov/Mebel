@@ -124,13 +124,7 @@ public class UserService(UserManager<User> userManager,
             throw new MarketException("Invalid data");
         }
 
-        var user = new User()
-        {
-            FullName = dto.FullName,
-            PhoneNumber = dto.PhoneNumber,
-            Address = dto.Address,
-            Gender = dto.Gender
-        };
+        var user = (User)dto;
 
         await _userManager.SetUserNameAsync(user, dto.PhoneNumber);
         var result = await _userManager.CreateAsync(user, dto.Password);
@@ -223,6 +217,7 @@ public class UserService(UserManager<User> userManager,
             Address = user.Address,
             BirthDate = user.BirthDate,
             Gender = user.Gender,
+            Roles = roles.ToList()
         };
     }
 
@@ -369,5 +364,22 @@ public class UserService(UserManager<User> userManager,
         await _imageService.DeleteAsync(user.AvatarUrl, folder);
         user.AvatarUrl = "";
         await _userManager.UpdateAsync(user);
+    }
+
+    public async Task<UserDto> GetUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ArgumentNullException("User not found");
+        }
+
+        return (UserDto)user;
+    }
+
+    public async Task<List<UserDto>> GetUsersAsync()
+    {
+        var users = await _userManager.GetUsersInRoleAsync(UserRoles.User);
+        return users.Select(x => (UserDto)x).ToList();
     }
 }

@@ -172,4 +172,14 @@ public class ColorService(IUnitOfWork unitOfWork)
         var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
         return new PagedList<ColorDto>(colorDtos, colorDtos.Count, pageNumber, pageSize);
     }
+
+    public async Task<SingleColorDto> GetById(int id)
+    {
+        var color = await _unitOfWork.Colors.GetByIdAsync(id);
+        if (color is null)
+        {
+            throw new ArgumentNullException("Color not found");
+        }
+        return (SingleColorDto)color;
+    }
 }

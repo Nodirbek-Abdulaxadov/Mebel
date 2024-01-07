@@ -10,4 +10,5 @@ public class LoginResult
     public DateTime BirthDate { get; set; }
     public Gender Gender { get; set; }
     public string? Token { get; set; }
+    public List<string> Roles { get; set; } = new();
 }

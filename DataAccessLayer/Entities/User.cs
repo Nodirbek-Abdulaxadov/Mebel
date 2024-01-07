@@ -9,7 +9,7 @@ public class User : IdentityUser
     public string FullName { get; set; } = string.Empty;
 
     [Required]
-    public Gender Gender { get; set; } = Gender.Unknown;
+    public Gender Gender { get; set; } = Gender.Male;
 
     [Required]
     public DateTime BirthDate { get; set; }

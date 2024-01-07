@@ -14,4 +14,7 @@ public interface IUserService
     Task SetProfilePictureAsync(IFormFile file, string userId);
     Task UpdateProfileImageAsync(IFormFile file, string userId);
     Task DeleteProfilePictureAsync(string userId);
+
+    Task<UserDto> GetUserAsync(string userId);
+    Task<List<UserDto>> GetUsersAsync();
 }
