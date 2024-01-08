@@ -17,4 +17,5 @@ public interface IUserService
 
     Task<UserDto> GetUserAsync(string userId);
     Task<List<UserDto>> GetUsersAsync(string role);
+    Task DeleteUserAsync(string userId);
 }

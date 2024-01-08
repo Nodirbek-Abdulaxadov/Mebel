@@ -382,4 +382,17 @@ public class UserService(UserManager<User> userManager,
         var users = await _userManager.GetUsersInRoleAsync(role);
         return users.Select(x => (UserDto)x).ToList();
     }
+
+    public async Task DeleteUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            throw new ArgumentNullException("User not found");
+        }
+
+        var role = await _userManager.GetRolesAsync(user);
+        await _userManager.RemoveFromRoleAsync(user, role[0]);
+        await _userManager.DeleteAsync(user);
+    }
 }
