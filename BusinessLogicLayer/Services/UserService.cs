@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -203,9 +204,9 @@ public class UserService(UserManager<User> userManager,
 
         var roles = await _userManager.GetRolesAsync(user);
 
-        var token = GenerateJwtToken(user.FullName, user.UserName, roles.ToList());
+        var token = GenerateJwtToken(user.FullName, user.UserName, user.Id, roles.ToList());
         var provider = _configuration["Jwt:Issuer"]??"";
-        await _userManager.RemoveAuthenticationTokenAsync(user, provider, "Token");
+        // await _userManager.RemoveAuthenticationTokenAsync(user, provider, "Token");
         await _userManager.SetAuthenticationTokenAsync(user, provider, "Token", token);
 
         return new LoginResult()
@@ -247,7 +248,9 @@ public class UserService(UserManager<User> userManager,
     /// <param name="username"></param>
     /// <param name="roles"></param>
     /// <returns></returns>
-    public string GenerateJwtToken(string fullName, string? username, List<string> roles)
+    public string GenerateJwtToken(string fullName, string? username, 
+                                   string userId,
+                                   List<string> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]??"key"); // Same key as used in authentication configuration
@@ -258,6 +261,7 @@ public class UserService(UserManager<User> userManager,
             {
                 new Claim(ClaimTypes.Name, username??""),
                 new Claim(ClaimTypes.GivenName, fullName),
+                new Claim("userId", userId),
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
             }),
             Expires = DateTime.UtcNow.AddMonths(1),
@@ -391,8 +395,10 @@ public class UserService(UserManager<User> userManager,
             throw new ArgumentNullException("User not found");
         }
 
-        var role = await _userManager.GetRolesAsync(user);
-        await _userManager.RemoveFromRoleAsync(user, role[0]);
+        var roles = await _userManager.GetRolesAsync(user);
+        await _userManager.RemoveFromRoleAsync(user, roles[0]);
+        var provider = _configuration["Jwt:Issuer"] ?? "";
+        await _userManager.RemoveAuthenticationTokenAsync(user, provider, "Token");
         await _userManager.DeleteAsync(user);
     }
 }

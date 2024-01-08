@@ -20,7 +20,7 @@ public class UserDto
             PhoneNumber = user.PhoneNumber!,
             Address = user.Address,
             ProfilePictureUrl = user.AvatarUrl,
-            Gender = nameof(user.Gender),
+            Gender = user.Gender.ToString(),
             BirthDate = user.BirthDate.ToString("dd/MM/yyyy"),
             PhoneNumberConfirmed = user.PhoneNumberConfirmed
         };
