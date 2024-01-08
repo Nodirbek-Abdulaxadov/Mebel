@@ -377,9 +377,9 @@ public class UserService(UserManager<User> userManager,
         return (UserDto)user;
     }
 
-    public async Task<List<UserDto>> GetUsersAsync()
+    public async Task<List<UserDto>> GetUsersAsync(string role)
     {
-        var users = await _userManager.GetUsersInRoleAsync(UserRoles.User);
+        var users = await _userManager.GetUsersInRoleAsync(role);
         return users.Select(x => (UserDto)x).ToList();
     }
 }

@@ -159,20 +159,6 @@ public class ColorService(IUnitOfWork unitOfWork)
         return model.ToDto(language);
     }
 
-    public async Task<List<ColorDto>> GetArchivedAsync(Language language)
-    {
-        var categories = await _unitOfWork.Colors.GetAllAsync(false);
-        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
-        return colorDtos;
-    }
-
-    public async Task<PagedList<ColorDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language)
-    {
-        var categories = await _unitOfWork.Colors.GetAllAsync(false);
-        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
-        return new PagedList<ColorDto>(colorDtos, colorDtos.Count, pageNumber, pageSize);
-    }
-
     public async Task<SingleColorDto> GetById(int id)
     {
         var color = await _unitOfWork.Colors.GetByIdAsync(id);
@@ -181,19 +167,5 @@ public class ColorService(IUnitOfWork unitOfWork)
             throw new ArgumentNullException("Color not found");
         }
         return (SingleColorDto)color;
-    }
-
-    public async Task<List<ColorDto>> GetActiveAsync(Language language)
-    {
-        var categories = await _unitOfWork.Colors.GetAllAsync(true);
-        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
-        return colorDtos;
-    }
-
-    public async Task<PagedList<ColorDto>> GetActivesAsPagedListAsync(int pageSize, int pageNumber, Language language)
-    {
-        var categories = await _unitOfWork.Colors.GetAllAsync(true);
-        var colorDtos = categories.Select(c => c.ToDto(language)).ToList();
-        return new PagedList<ColorDto>(colorDtos, colorDtos.Count, pageNumber, pageSize);
     }
 }

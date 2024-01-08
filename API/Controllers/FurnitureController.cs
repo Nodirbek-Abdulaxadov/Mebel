@@ -31,23 +31,6 @@ public class FurnitureController(IFurnitureService furnitureService)
         }
     }
 
-    [HttpGet("{lang}/archived/all")]
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetArchivedsAsync(string lang)
-    {
-        try
-        {
-            var categories = await _furnitureService.GetArchivedAsync(lang.ToLanguage());
-            return Ok(categories);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
     [HttpGet("{lang}/paged")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
@@ -59,40 +42,6 @@ public class FurnitureController(IFurnitureService furnitureService)
         try
         {
             var categories = await _furnitureService.GetAllAsync(pageSize,
-                                                            pageNumber,
-                                                            lang.ToLanguage());
-            var metadata = new
-            {
-                categories.TotalCount,
-                categories.PageSize,
-                categories.PageIndex,
-                categories.TotalPages,
-                categories.HasNextPage,
-                categories.HasPreviousPage
-            };
-
-            Response.Headers["X-Pagination"] = JsonConvert.SerializeObject(metadata);
-
-            return Ok(categories.Items);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    [HttpGet("{lang}/archived/paged")]
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(List<FurnitureDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetArchivedsAsPagedAsync([FromRoute] string lang,
-                                                 [FromQuery] int pageSize = 10,
-                                                 [FromQuery] int pageNumber = 1)
-    {
-        try
-        {
-            var categories =
-                await _furnitureService.GetArchivedsAsPagedListAsync(pageSize,
                                                             pageNumber,
                                                             lang.ToLanguage());
             var metadata = new

@@ -14,7 +14,7 @@ public class RegisterUserDto : LoginUserDto
         {
             FullName = v.FullName,
             Gender = v.Gender,
-            BirthDate = DateTime.Parse(v.BirthDate),
+            BirthDate = v.BirthDate.ToDateTime(),
             Address = v.Address,
             PhoneNumber = v.PhoneNumber
         };

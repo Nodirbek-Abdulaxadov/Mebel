@@ -247,30 +247,4 @@ public class FurnitureService(IUnitOfWork unitOfWork,
         }
         return model.ToDto(language);
     }
-
-    /// <summary>
-    /// Get archived all furnitures
-    /// </summary>
-    /// <param name="language"></param>
-    /// <returns></returns>
-    public async Task<List<FurnitureDto>> GetArchivedAsync(Language language)
-    {
-        var furnitures = await _unitOfWork.Furnitures.GetAllAsync(false);
-        var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
-        return furnitureDtos;
-    }
-
-    /// <summary>
-    /// Get archived furnitures with pagination
-    /// </summary>
-    /// <param name="pageSize"></param>
-    /// <param name="pageNumber"></param>
-    /// <param name="language"></param>
-    /// <returns></returns>
-    public async Task<PagedList<FurnitureDto>> GetArchivedsAsPagedListAsync(int pageSize, int pageNumber, Language language)
-    {
-        var furnitures = await _unitOfWork.Furnitures.GetAllAsync(false);
-        var furnitureDtos = furnitures.Select(c => c.ToDto(language)).ToList();
-        return new PagedList<FurnitureDto>(furnitureDtos, furnitureDtos.Count, pageNumber, pageSize);
-    }
 }

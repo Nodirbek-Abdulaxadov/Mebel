@@ -16,7 +16,8 @@ public static class Mapper
                 Language.Uz => category.NameUz,
                 Language.Ru => category.NameRu,
                 _ => category.NameUz
-            }
+            },
+            IsActive = category.IsActive,
         };
 
     public static ColorDto ToDto(this Color color, Language language)
@@ -29,7 +30,8 @@ public static class Mapper
                 Language.Ru => color.NameRu,
                 _ => color.NameUz
             },
-            HexCode = color.HexCode
+            HexCode = color.HexCode,
+            IsActive = color.IsActive,
         };
 
     public static Language ToLanguage(this string lang)
@@ -63,6 +65,7 @@ public static class Mapper
             Category = furniture.Category!.ToDto(language),
             Images = furniture.Images.Select(i => i.Url).ToList(),
             Colors = furniture.Colors?.Select(c => c.Color!.ToDto(language)).ToList(),
-            LikesCount = furniture.LikedUsers.Count
+            LikesCount = furniture.LikedUsers.Count,
+            IsActive = furniture.IsActive
         };
 }

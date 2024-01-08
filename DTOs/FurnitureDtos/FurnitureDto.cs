@@ -14,4 +14,5 @@ public class FurnitureDto : BaseDto
     public List<string>? Images { get; set; }
     public List<ColorDto>? Colors { get; set; }
     public int LikesCount { get; set; }
+    public bool IsActive { get; set; }
 }

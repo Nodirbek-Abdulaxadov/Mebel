@@ -16,5 +16,5 @@ public interface IUserService
     Task DeleteProfilePictureAsync(string userId);
 
     Task<UserDto> GetUserAsync(string userId);
-    Task<List<UserDto>> GetUsersAsync();
+    Task<List<UserDto>> GetUsersAsync(string role);
 }
